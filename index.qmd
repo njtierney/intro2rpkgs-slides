@@ -18,30 +18,6 @@ cache: true
 freeze: true
 ---
 
-<!--     - "rstudio.qmd" -->
-
-<!--     # - "workflow.qmd" # removed for initial run of course -->
-
-<!--     - "create-the-pkg.qmd" -->
-
-<!--     - "exporting-and-documenting.qmd" -->
-
-<!--     - "add-arguments.qmd" -->
-
-<!--     - "use-check.qmd" -->
-
-<!--     - "how-to-use-extra-pkgs.qmd" # lots of extra work -->
-
-<!--     - "use-tests.qmd" -->
-
-<!--     - "push-online.qmd"  -->
-
-<!--     - "add-readme.qmd" -->
-
-<!--     - "next-steps.qmd" -->
-
-<!--     - "extensions.qmd" -->
-
 ```{r}
 #| label: library
 #| include: false
@@ -282,9 +258,359 @@ praise()
 
 Does this deliver your praise?
 
+## Expanding Praise: Adding arguments
+
+- How to make this function praise someone else? Currently it only applies to Nick (or you!) 
+
+```{r}
+praise <- function() {
+  "Hey Nick, You're really awesome!"
+}
+```
+
+- What if we want to praise other people like Chitra, Di, Miles, Kerrie, or Holly?
+
+## Expanding Praise: People
+
+We could rewrite the function each time:
+
+:::{.panel-tabset}
+
+### Chitra
+
+```{r}
+praise <- function() {
+  "Hey Chitra, You're really awesome!"
+}
+
+praise()
+```
+
+### Di
+
+```{r}
+praise <- function() {
+  "Hey Di, You're really awesome!"
+}
+
+praise()
+```
+
+:::
+
+## Expanding Praise: Additional people
+
+Or we could make specific functions for each person:
+
+:::{.panel-tabset}
+
+### praise-chitra
+
+```{r}
+praise_chitra <- function() {
+  "Hey Chitra, You're really awesome!"
+}
+
+praise_chitra()
+```
 
 
-# Future Resources
+### praise-di
+
+```{r}
+praise_di <- function() {
+  "Hey Di, You're really awesome!"
+}
+
+praise_di()
+```
+
+:::
+
+## repetition isn't quite right!
+
+- We would need to write a new function for every person we wanted to praise.
+- Repetitive, isn't really expressing the idea that we want to communicate: 
+
+> We want to deliver praise to __anyone__.
+
+## A template?
+
+```{r}
+"Hey PERSON, You're really awesome!"
+```
+
+Where we could replace "PERSON" with a name! The interface could be:
+
+```r
+praise("Di")
+praise("Chitra")
+```
+
+**Demo:** using paste
+
+## `paste` praise
+
+
+```{r}
+praise <- function(name){
+  paste0("Hey ", name, ", You're really awesome!")
+}
+praise("Di")
+praise("Chitra")
+praise("Hey")
+```
+
+
+## `devtools::load_all()`: the workflow of package development
+
+1.  Edit R functions
+2.  `devtools::load_all()` (or keyboard shortcut Ctrl/Cmd+Shift+L)
+3. Test that the output does what we expect in the console
+4. If you aren't satisfied with how it behaves, tepeat steps 1-3 until satisfied.
+
+## Your turn: add arguments and `load_all()`
+
+1. Update the `praise` function to use the extra argument.
+2. Use `devtools::load_all()` to load the function 
+3. see if the output does what you want.
+4. Repeat 1-3 until you are happy with the output.
+5. Extension: Try changing the praise adjective with another argument!
+
+- See [cheatsheet for package development](https://rstudio.github.io/cheatsheets/html/package-development.html) 
+## Using `devtools::check()`
+
+- Demo & online book
+
+# Order of operations: ERROR before WARNING before NOTE
+
+Fix these in the order that they appear:
+
+1. Fix errors first, because they are larger more substantial problems
+2. Fix warnings second as they are less bad than errors
+3. Fix notes generally only when you are getting close to submit to CRAN
+
+- Caveat around easy wins and linked problems
+
+## Solve one thing at a time
+
+- It is worth trying your best to solve exactly one problem at a time.
+- Work on solving that one problem first, then run `check()` and move on to the second one once that is solved.
+- The reason is that sometimes as we fix things, we can break them further. 
+
+## How to solve the error/warning/note
+
+Break it into chunks. (demo)
+
+## Use other packages
+
+We're going to level up our message by adding some styling to the message using the [`cli`](https://cli.r-lib.org/) package. I want to introduce this package for three reasons:
+
+1. The fundamental message writing will improve your code in many places
+1. Makes it easier to write useful messages to users
+1. It will help make your package look sleek and modern
+
+## Using {cli}
+
+You are going to modify your function to look like this:
+
+```{r}
+praise <- function(name){
+  cli::cli_inform("Hey {name}, You're so awesome!")
+}
+```
+
+Notice this is really similar to our previous template:
+
+```{r}
+"Hey PERSON, You're so awesome!"
+```
+
+(demo + discussion)
+
+## `pkg::fun` - why the `::`?
+
+- demo + discussion on conflicts, NAMESPACE, tidyverse, use of library
+- refer to book
+
+## Tests
+
+A main workflows in R will be the following:
+
+1. Edit R functions
+2. `load_all()` (or keyboard shortcut Ctrl/Cmd+Shift+L)
+3. Explore how R functions work, do they behave as you expect
+4. Repeat 1-3 until satisfied
+5. Perform `devtools::check()`
+
+## formal vs informal tests
+
+1. Edit R functions
+2. `load_all()` (or keyboard shortcut Ctrl/Cmd+Shift+L)
+3. **Explore how R functions work, do they behave as you expect**
+4. Repeat 1-3 until satisfied
+5. Perform `devtools::check()`
+
+## Benefits of formalising tests
+
+1. Force you to revisit your own code. 
+2. They give you freedom to make changes in your code. 
+3. Outside confidence from others. 
+
+- demo/online book
+
+## Pushing it online
+
+- benefits of git and github: transparency, fireproof, portfolio, sharing
+- setup of git/github
+- `use_git()`
+- demo/online book
+
+## This commit will...
+
+- Generally, you want to finish the sentence, "this commit will..." as a way to structure your commit messages.
+- Demo emoji github lookup, so you add fun things like rockets to your commit messages: <https://gist.github.com/rxaviers/7360908>
+
+# Demo: Features of GitHub
+
+There's a lot of things about github!
+
+ - issues
+ - releases
+ - milestones
+ - projects
+
+What questions do you have about github from here?
+
+## How to use git and github
+
+1. Make changes to package
+2. `load_all()`
+3. Ensure it works as expected, through informal/formal testing
+4. Select changes 
+5. Write commit message
+6. Push to github
+
+Remember this phrase: 
+
+> commit early, commit often.
+
+## Adding a README file
+
+A README for a package should aim to answer the following questions:
+
+- What is your package?
+- Why should we use it?
+- How do we use it?
+
+## adding a README file
+
+We can set up the README with the following command:
+
+```r
+use_readme_rmd()
+```
+
+Which tells us the following:
+
+```
+✔ Writing README.Rmd.
+✔ Adding "^README\\.Rmd$" to .Rbuildignore.
+☐ Modify README.Rmd.
+✔ Writing .git/hooks/pre-commit.
+```
+
+## Adding a README
+
+README.Rmd file allows us to demonstrate our package, in a similar way to how we have a vignette. 
+
+Some good examples of R package READMEs:
+
+- [`dplyr`](https://github.com/tidyverse/dplyr?tab=readme-ov-file#dplyr-)
+- [`datapasta`](https://github.com/MilesMcBain/datapasta)
+- [`skimr`](https://github.com/ropensci/skimr?tab=readme-ov-file#skimr-)
+- [`magick`](https://github.com/ropensci/magick?tab=readme-ov-file#ropensci-the-magick-package)
+- [`visdat`](https://github.com/ropensci/visdat?tab=readme-ov-file#visdat-)
+
+## How to write the README, though?
+
+Writing documentation can be a bit hard, but here are some general tips:
+
+- Take the vignette, make it smaller.
+- Take the examples, put them in there.
+- Remember that done is better than perfect.
+
+# A common pitfall with README.Rmd
+
+- Remember to add `library(pkg)` to your README
+- Remember to build the package before you knit!
+  - You can do this with `build_readme()` (which builds the package and knits the README file)
+  
+  
+## Next Steps
+
+- Use continuous integration, so every code push runs checks and tests
+- Add a website with pkgdown
+- Put your R package on the R Universe
+- Put your package on CRAN
+
+## Using Continuous Integration
+
+- set things up to happen automatically every time we push to GitHub.
+- go to `use_github_action()` docs
+- see `covr::report()`
+
+```r
+#  (singular, not plural)
+use_github_action()
+```
+
+## Adding a website with pkgdown
+
+This has now been made so easy thanks to `pkgdown`:
+
+```r
+`use_pkgdown_github_pages()`
+```
+
+- look at other packages for inspiration on structure
+- try to use a different default theme
+
+## R Universe
+
+R Universe presents a middle ground between your package on github, and your package on CRAN.
+
+- See https://r-universe.dev/search
+- Similar to CRAN - you get speed of builds thanks to binary builds.
+- Linked to your github
+- Fewer barriers to entry
+- Learn more at https://docs.r-universe.dev/publish/set-up.html
+  
+## Publish to CRAN
+
+Before you publish on CRAN, you will need to go through some more hoops. I would recommend at least skim reading the R packages book: https://r-pkgs.org/
+
+- A few barriers
+- very stable, fast
+- Requires constant maintenance from you - usually need to respond to CRAN requests within 2 weeks
+- I would recommend reading https://r-pkgs.org/release.html
+
+## Possible extensions (if time)
+
+ - Adding `praise()` function to run on startup via `edit_r_profile()`
+ - Randomly add a nice synonym with the `syn` package
+ - Choose from a set of random phrases (explore the tidyverse blog samples)
+ - Add progress bars to demonstrate thinking
+ 
+## Possible extension: tests
+
+- Add snapshot tests
+- Explore random features of adding sampling and how this interacts
+- get this to fail once to demonstrate the importance of setting seed
+
+
+
+## Future Resources
 
 -   ["R packages"](https://r-pkgs.org/). The authority on best practices for package development
 -   ["rOpenSci Packages: Development, Maintenance, and Peer Review"](https://devguide.ropensci.org/index.html). This is an excellent guide that is more advanced.
