@@ -1,0 +1,16 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+dev
+docs
+/.quarto/
+*.aux
+*.log
+*.pdf
+*.tex
+*.toc
+.Rdata
+.httr-oauth
+.DS_Store
+.quarto

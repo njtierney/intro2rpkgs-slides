@@ -1,0 +1,290 @@
+---
+title: "**Introduction to** \nR packages"
+subtitle: "WOMBAT"
+date: "2025-09-28"
+author: "Nicholas Tierney"
+institute: Statistical Consultant
+format: 
+  revealjs:
+    theme: [blood, extra.scss]
+incremental: true
+slide-number: c
+show-slide-number: all
+editor: visual
+execute: 
+  echo: true
+warning: false
+cache: true
+freeze: true
+---
+
+<!--     - "rstudio.qmd" -->
+
+<!--     # - "workflow.qmd" # removed for initial run of course -->
+
+<!--     - "create-the-pkg.qmd" -->
+
+<!--     - "exporting-and-documenting.qmd" -->
+
+<!--     - "add-arguments.qmd" -->
+
+<!--     - "use-check.qmd" -->
+
+<!--     - "how-to-use-extra-pkgs.qmd" # lots of extra work -->
+
+<!--     - "use-tests.qmd" -->
+
+<!--     - "push-online.qmd"  -->
+
+<!--     - "add-readme.qmd" -->
+
+<!--     - "next-steps.qmd" -->
+
+<!--     - "extensions.qmd" -->
+
+```{r}
+#| label: library
+#| include: false
+library(tidyverse)
+library(knitr)
+library(colorspace)
+library(naniar)
+library(visdat)
+library(brolgar)
+library(icons)
+```
+
+```{r}
+#| label: source-r-files
+#| echo: false
+#| message: false
+#| output: false
+lapply(list.files(here::here("R"), full.names = TRUE), source)
+```
+
+```{r}
+#| label: helpers
+#| include: false
+
+icons_fa <- icons::fontawesome
+icon_box <- icon_style(icons_fa$solid$`box-open`, fill = "#f0a800")
+icon_link <- icon_style(icons_fa$solid$link, fill = "#f0a800")
+icon_twitter <- icon_style(icons_fa$brands$twitter, fill = "#f0a800")
+icon_github <- icon_style(icons_fa$brands$github, fill = "#f0a800")
+icon_plane <- icon_style(icons_fa$solid$`paper-plane`, fill = "#f0a800")
+
+
+as_table <- function(...) knitr::kable(..., format='html', digits = 3)
+
+theme_set(
+  theme_grey(base_size = 16) +
+    theme(
+      legend.position = "bottom",
+      plot.background = element_rect(fill = "transparent"),
+      legend.background = element_rect(fill = "transparent")
+    )
+)
+
+# **ni**ck's **pa**lette
+nipa <- list(red = "#c03018",
+             orange = "#f0a800",
+             green = "#609048",
+             purple = "#484878",
+             light_purple = "#A3A3BB",
+             light_green = "#AFC7A3",
+             light_orange = "#F7D37F",
+             light_red = "#DF978B",
+             pale_purple = "#ECECF1",
+             pale_green = "#D7E3D1",
+             pale_orange = "#FBE9BF",
+             pale_red = "#EFCBC4")
+
+```
+
+## About
+
+-   **introduction to** creating an R package.
+-   It focusses on building an R package with 1-2 functions, the `praiseme` package (modelled on the [praise](https://cran.r-project.org/web/packages/praise/) package).
+
+## Goals
+
+-   Create the basic structure of an R package.
+-   Manage dependencies with [`usethis`](https://usethis.r-lib.org/) and [`devtools`](https://devtools.r-lib.org/).
+-   Create documentation with [`roxygen2`](https://roxygen2.r-lib.org/).
+-   Write and run unit tests with [`testthat`](https://testthat.r-lib.org/) to verify package functionality.
+-   Use Git and GitHub to put your R package online.
+-   Discuss next steps for package development:
+    -   CI, pkgdown, R Unviverse, CRAN
+
+## Why write an R package?
+
+-   An R package is a way for you to use the same code in many places.
+-   A first R package could be a collection of useful R code you have written and use in multiple projects. e.g., [{neato}](https://github.com/njtierney/neato),which contained some functions to help tidy up decision trees.
+-   Main benefit: portable way to share code.
+-   How to share code otherwise? Email? git? between sessions?
+
+## An R package is a laundry basket
+
+-   Analogy from [Roger Peng](https://rdpeng.org/), who described an R package as being like a laundry basket.
+-   Trying to get from an apartment to the laundry withough a laundry basket: losing socks, shirts, etc
+-   Focussed on holding onto a bundle of things you forget other important details, like your keycard
+-   Afterwards you've got to handle soggy clothing
+-   A laundry basket keeps it all together
+
+## Approach for today: Keeping it simple with the {praiseme} package
+
+-   Inspiration: Hilary Parker's, ["Writing an R package from scratch"](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/).
+
+-   Which focussed on creating a package, [`cats`](https://github.com/hilaryparker/cats) (demo)
+
+-   So accessible
+
+-   Encouraged iteration
+
+## Our approach: praise
+
+-   empower you with a simple, fun idea: praise
+
+```{r}
+praise <- function(){
+  "Hey, you're really great!"
+}
+
+praise()
+```
+
+## our approach: praise
+
+-   Ground-up writing
+-   Documentation, metadata (DESCRIPTION file), tests, checks, git, github
+-   Focus on package structure, keep the R code simple
+-   Please ask questions at any time
+
+## our approach: online book!
+
+-   We have an online book, [intro2rpkgs.njtierney.com/](http://intro2rpkgs.njtierney.com/)
+-   Materials will stay up there
+-   We will move between slides and book
+-   Again: please feel free to ask questions at any time
+
+## Installation
+
+-   See [intro2rpkgs.njtierney.com/installation](http://intro2rpkgs.njtierney.com/installation.html)
+-   We will install and check git and github later
+-   (go to online book)
+- Discuss workflow: console vs script
+
+```{r}
+library(pak)
+library(usethis)
+library(devtools)
+library(testthat)
+library(roxygen2)
+library(knitr)
+R.version.string
+```
+
+## Rstudio
+
+- If R is the engine and bare bones of your car, then RStudio is like _the rest of the car_.
+- Pane layout, and changing appearance
+- Discuss setup - go to book: [intro2rpkgs.njtierney.com/rstudio](http://intro2rpkgs.njtierney.com/rstudio.html)
+- Recommend checking out the RStudio cheatsheet
+
+## Creating the package!
+
+- Using Rstudio project approach
+- go to book: [intro2rpkgs.njtierney.com/create-the-pkg](http://intro2rpkgs.njtierney.com/create-the-pkg.html)
+- Discuss other file types
+  - DESCRIPTION
+  - .Rbuildignore
+  - NAMESPACE
+- Back to book
+
+## Exporting and documenting functions
+
+- Our new `praise()` function isn't loaded with `library(praiseme)`
+- We need to __export the function__
+- sourcing vs exporting
+- exporting: specific; source: everything
+- roxygen2
+
+## Documenting code with `{roxygen2}`
+
+:::{.panel-tabset}
+
+### R Code
+
+``` r
+praise <- function() {
+  "Hey Nick, You're really awesome!"
+}
+```
+
+### R Code + roxygen
+
+``` r
+#' Title
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+praise <- function() {
+  "Hey Nick, You're really awesome!"
+}
+```
+
+:::
+
+## Documenting code with `{roxygen2}`
+
+- Special syntax `#' @tag`
+- Documents your code in the same place as the code, rather than separate files
+- Manages other details for you
+- Go to online book: roxygen skeleton [intro2rpkgs.njtierney.com/exporting-and-documenting](http://intro2rpkgs.njtierney.com/exporting-and-documenting.html)
+- Your turn: populate roxygen
+
+## Documenting code with `devtools::document()`
+
+- We then call `devtools::document()` (demo)
+
+```         
+ℹ Updating praiseme documentation
+ℹ Loading praiseme
+Writing NAMESPACE
+Writing praise.Rd
+```
+
+- Look at `?praise`
+- look at NAMESPACE and man/praise.Rd
+
+## Documenting code with `devtools::document()`
+
+- Add special markup "roxygen" to document our `praise` function
+- Add the `#' @export` line
+- Run `devtools::document()`
+  - Puts the `praise` function in NAMESPACE
+  - Creates documentation and places it in `man/praise.Rd`
+  - Makes it available for user installs the package and runs `library(praiseme)`
+
+## Restart + `library(praiseme)`
+
+Now let's try this:
+
+- Restart R
+- Install + Restart
+
+```r
+library(praiseme)
+praise()
+```
+
+Does this deliver your praise?
+
+
+
+# Future Resources
+
+-   ["R packages"](https://r-pkgs.org/). The authority on best practices for package development
+-   ["rOpenSci Packages: Development, Maintenance, and Peer Review"](https://devguide.ropensci.org/index.html). This is an excellent guide that is more advanced.
