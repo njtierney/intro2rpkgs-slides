@@ -1,5 +1,5 @@
-Package: intro2rpkgs
-Title: Book About Essentials of Writing R Packages
+Package: intro2rpkgs-slides
+Title: Slides accompanying the Book About Essentials of Writing R Packages
 Version: 0.0.0.9000
 Authors@R: 
     person("Nicholas", "Tierney", , "nicholas.tierney@gmail.com", role = c("aut", "cre"),
@@ -25,3 +25,5 @@ Imports:
   tidyverse,
   usethis,
   visdat
+URL: https://github.com/njtierney/intro2rpkgs-slides
+BugReports: https://github.com/njtierney/intro2rpkgs-slides/issues
